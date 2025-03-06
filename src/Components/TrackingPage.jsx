@@ -32,10 +32,8 @@ const TrackingPage = () => {
                 </div>
             </div>
 
-            {/* Main Content */}
             <div className="content">
                 <div className="content-box">
-                    {/* Service Boxes */}
                     <div className="services-grid">
                         {services.map((service) => {
                             const Icon = service.icon;
@@ -54,7 +52,6 @@ const TrackingPage = () => {
                         })}
                     </div>
 
-                    {/* Tracking Section */}
                     <div className="tracking-section">
                         <div className="tracking-label">TRACKING ID</div>
                         <div className="tracking-input-container">
@@ -68,7 +65,6 @@ const TrackingPage = () => {
                             <button className="track-button">TRACK</button>
                         </div>
 
-                        {/* Links */}
                         <div className="tracking-links-container">
                             <div className="divider"></div>
                             <div className="tracking-links">
@@ -77,13 +73,10 @@ const TrackingPage = () => {
                             </div>
                         </div>
 
-                        {/* Status Box */}
                         <div className="status-box">
                             <h2>Delivered</h2>
                             <p>Thursday 12/05/2019 at 1:06 pm</p>
                         </div>
-
-                        {/* Progress Bar */}
                         <div className="progress-bar"></div>
                     </div>
                 </div>

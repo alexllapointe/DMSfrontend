@@ -60,7 +60,6 @@ html {
     z-index: 10;
 }
 
-/* Service Boxes */
 .services-grid {
     display: flex;
     gap: 20px;

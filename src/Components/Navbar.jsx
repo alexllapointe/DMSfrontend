@@ -16,7 +16,6 @@ const Navbar = () => {
                     <li><a href="/random">Page 3</a></li>
                 </ul>
 
-                {/* Hamburger Icon (Mobile) */}
                 <div className="hamburger" onClick={() => setIsOpen(!isOpen)}>
                     <Menu size={28} />
                 </div>

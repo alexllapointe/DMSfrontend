@@ -11,7 +11,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/tracking" element={<TrackingPage />} />
-        <Route path="/landing" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
       </Routes>
     </Router>
   );
