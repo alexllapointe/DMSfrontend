@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import TrackingPage from "./Components/TrackingPage";
 import LandingPage from "./Components/LandingPage";
 import Navbar from "./Components/Navbar";
+import Footer from "./Components/Footer";
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/tracking" element={<TrackingPage />} />
         <Route path="/" element={<LandingPage />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }

@@ -68,8 +68,8 @@ const TrackingPage = () => {
                         <div className="tracking-links-container">
                             <div className="divider"></div>
                             <div className="tracking-links">
-                                <a href="#">MULTIPLE TRACKING NUMBERS?</a>
-                                <a href="#">NEED HELP?</a>
+                                <a href="">MULTIPLE TRACKING NUMBERS?</a>
+                                <a href="">NEED HELP?</a>
                             </div>
                         </div>
 
