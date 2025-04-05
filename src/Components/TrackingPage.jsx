@@ -1,35 +1,28 @@
 import React, { useState } from 'react';
 import { Package, Truck, MapPin } from 'lucide-react';
 import '../Styles/TrackingPage.css';
+import ChatBox from './ChatBox'; // 👈 NEW
+import '../Styles/ChatBox.css'; // 👈 NEW
 
 const TrackingPage = () => {
     const [activeBox, setActiveBox] = useState(null);
     const [trackingId, setTrackingId] = useState('');
 
     const services = [
-        {
-            id: 'rate',
-            title: 'RATE & SHIP',
-            icon: Package,
-        },
-        {
-            id: 'track',
-            title: 'TRACK',
-            icon: Truck,
-        },
-        {
-            id: 'locations',
-            title: 'LOCATIONS',
-            icon: MapPin,
-        }
+        { id: 'rate', title: 'RATE & SHIP', icon: Package },
+        { id: 'track', title: 'TRACK', icon: Truck },
+        { id: 'locations', title: 'LOCATIONS', icon: MapPin }
     ];
+
+    // Simulated dynamic IDs — replace with actual user session values
+    const driverId = "64f123abc123456";
+    const managerId = "64f987xyz987654";
 
     return (
         <div className="app-container">
             {/* Hero Section */}
             <div className="hero">
-                <div className="hero-overlay">
-                </div>
+                <div className="hero-overlay" />
             </div>
 
             <div className="content">
@@ -77,13 +70,18 @@ const TrackingPage = () => {
                             <h2>Delivered</h2>
                             <p>Thursday 12/05/2019 at 1:06 pm</p>
                         </div>
+
                         <div className="progress-bar"></div>
+                    </div>
+
+                    {/* 💬 Chat Section */}
+                    <div className="chat-section-wrapper">
+                        <ChatBox driverId={driverId} managerId={managerId} />
                     </div>
                 </div>
             </div>
         </div>
     );
 };
-
 
 export default TrackingPage;
