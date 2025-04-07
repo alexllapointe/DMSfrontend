@@ -1,0 +1,33 @@
+/* Ensure the container takes up the full viewport and centers its content */
+.maps-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    /* Adjust top padding to avoid overlapping the fixed navbar */
+    padding-top: 80px;
+    font-family: Arial, sans-serif;
+    background-color: #f0f1f3;
+}
+
+/* Style for the address input */
+.address-input {
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the map container */
+.map-box {
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}

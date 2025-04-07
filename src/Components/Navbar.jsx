@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../Styles/Navbar.css';
-import { Menu } from 'lucide-react';
+import { Menu, User, Search } from 'lucide-react';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -8,14 +8,25 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="nav-container">
-                <h1 className="nav-logo">Delivery Management System</h1>
-
-                <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
-                    <li><a href="/tracking">Tracking</a></li>
-                    <li><a href="/landing">Landing</a></li>
-                    <li><a href="/random">Page 3</a></li>
-                </ul>
-
+                <div className="nav-left">
+                    <h1 className="nav-logo">
+                        <a href="/">DMS</a>
+                    </h1>
+                    <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
+                        <li>
+                            <a href="/maps">Maps</a>
+                        </li>
+                    </ul>
+                </div>
+                <div className="nav-right">
+                    <a href="/login" className="nav-auth">
+                        <User size={20} />
+                        <span>Sign Up / Login</span>
+                    </a>
+                    <a href="/search" className="nav-search">
+                        <Search size={20} />
+                    </a>
+                </div>
                 <div className="hamburger" onClick={() => setIsOpen(!isOpen)}>
                     <Menu size={28} />
                 </div>

@@ -7,6 +7,7 @@
     top: 0;
     left: 0;
     z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .nav-container {
@@ -17,11 +18,21 @@
     margin: 0 auto;
 }
 
-.nav-logo {
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    /* Increased gap to separate nav links from 'DMS' */
+}
+
+.nav-logo a {
     color: white;
     font-size: 22px;
     font-weight: bold;
+    text-decoration: none;
+    transition: text-decoration 0.3s ease-in-out;
 }
+
 
 /* Navigation Links */
 .nav-links {
@@ -39,13 +50,39 @@
     color: white;
     font-size: 16px;
     font-weight: 500;
-    transition: color 0.3s ease-in-out;
+    transition: color 0.3s ease-in-out, text-decoration 0.3s ease-in-out;
 }
 
 .nav-links a:hover {
-    color: white;
+    text-decoration: underline;
 }
 
+/* Right-side icons and links */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-right a {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: text-decoration 0.3s ease-in-out;
+}
+
+.nav-right a:hover {
+    text-decoration: underline;
+}
+
+.nav-right a span {
+    margin-left: 5px;
+}
+
+/* Hamburger Menu */
 .hamburger {
     display: none;
     color: white;
