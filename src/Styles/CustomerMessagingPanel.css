@@ -1,0 +1,337 @@
+/* USPS Color Variables */
+:root {
+  --usps-blue: #004B87;
+  --usps-light-blue: #0077CC;
+  --usps-red: #E31837;
+  --usps-gray: #333333;
+  --usps-light-gray: #F5F5F5;
+  --usps-border: #D1D1D1;
+  --usps-success: #2E7D32;
+  --usps-warning: #ED6C02;
+  --usps-error: #D32F2F;
+  --usps-text-primary: #333333;
+  --usps-text-secondary: #666666;
+  --usps-text-disabled: #9E9E9E;
+  --usps-background: #FFFFFF;
+  --usps-background-alt: #F5F5F5;
+  --usps-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  --usps-transition: all 0.3s ease;
+}
+
+/* Font Family */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Messaging Panel */
+.messaging-panel {
+  display: flex;
+  height: 600px;
+  max-width: 1000px;
+  margin: 20px auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--usps-shadow);
+  border: 1px solid var(--usps-border);
+  background-color: var(--usps-background);
+}
+
+/* Customer List */
+.customer-list {
+  width: 300px;
+  border-right: 1px solid var(--usps-border);
+  background-color: var(--usps-background-alt);
+  overflow-y: auto;
+}
+
+.customer-list-header {
+  padding: 16px;
+  background-color: var(--usps-blue);
+  color: white;
+}
+
+.customer-list-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--usps-border);
+  cursor: pointer;
+  transition: var(--usps-transition);
+}
+
+.customer-list-item:hover {
+  background-color: rgba(0, 75, 135, 0.05);
+}
+
+.customer-list-item.selected {
+  background-color: rgba(0, 75, 135, 0.1);
+}
+
+.customer-avatar {
+  background-color: var(--usps-blue);
+  color: white;
+}
+
+.customer-name {
+  font-weight: 500;
+  color: var(--usps-text-primary);
+}
+
+.customer-order {
+  font-size: 0.8rem;
+  color: var(--usps-text-secondary);
+}
+
+.order-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.order-status.delivered {
+  background-color: #E8F5E9;
+  color: var(--usps-success);
+}
+
+.order-status.in-transit {
+  background-color: #E3F2FD;
+  color: var(--usps-blue);
+}
+
+.order-status.scheduled {
+  background-color: var(--usps-background-alt);
+  color: var(--usps-text-secondary);
+}
+
+.order-status.delayed {
+  background-color: #FFEBEE;
+  color: var(--usps-error);
+}
+
+.unread-badge {
+  background-color: var(--usps-error);
+  color: white;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+/* Chat Area */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--usps-background);
+}
+
+.chat-header {
+  padding: 16px;
+  background-color: var(--usps-blue);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header-title {
+  font-weight: 500;
+}
+
+.chat-header-subtitle {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.close-button {
+  color: white;
+  cursor: pointer;
+  transition: var(--usps-transition);
+}
+
+.close-button:hover {
+  opacity: 0.8;
+}
+
+/* Order Info */
+.order-info {
+  padding: 12px 16px;
+  background-color: var(--usps-background-alt);
+  border-bottom: 1px solid var(--usps-border);
+}
+
+.order-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.order-info-title {
+  font-weight: 500;
+  color: var(--usps-text-primary);
+}
+
+.order-info-details {
+  font-size: 0.8rem;
+  color: var(--usps-text-secondary);
+}
+
+.order-info-locations {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--usps-text-secondary);
+}
+
+/* Messages Container */
+.messages-container {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--usps-background);
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.message-bubble.sent {
+  align-self: flex-end;
+  background-color: var(--usps-blue);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message-bubble.received {
+  align-self: flex-start;
+  background-color: white;
+  color: var(--usps-text-primary);
+  border: 1px solid var(--usps-border);
+  border-bottom-left-radius: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  opacity: 0.7;
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Input Area */
+.input-area {
+  padding: 16px;
+  border-top: 1px solid var(--usps-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--usps-background);
+}
+
+.attach-button {
+  color: var(--usps-text-secondary);
+  cursor: pointer;
+  transition: var(--usps-transition);
+}
+
+.attach-button:hover {
+  color: var(--usps-blue);
+}
+
+.message-input {
+  flex: 1;
+  border: 1px solid var(--usps-border);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  outline: none;
+  transition: var(--usps-transition);
+}
+
+.message-input:hover {
+  border-color: var(--usps-light-blue);
+}
+
+.message-input:focus {
+  border-color: var(--usps-blue);
+}
+
+.send-button {
+  background-color: var(--usps-blue);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--usps-transition);
+}
+
+.send-button:hover {
+  background-color: var(--usps-light-blue);
+}
+
+/* Loading and Error States */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.error-message {
+  color: var(--usps-error);
+  text-align: center;
+  padding: 24px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+  color: var(--usps-text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .messaging-panel {
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .customer-list {
+    width: 100%;
+    height: 200px;
+    border-right: none;
+    border-bottom: 1px solid var(--usps-border);
+  }
+
+  .chat-area {
+    height: calc(100vh - 200px);
+  }
+} 

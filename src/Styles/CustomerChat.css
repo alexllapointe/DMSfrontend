@@ -1,0 +1,193 @@
+/* USPS-style colors and design */
+:root {
+  --usps-blue: #004B87;
+  --usps-red: #E31837;
+  --usps-light-blue: #0077CC;
+  --usps-gray: #333333;
+  --usps-light-gray: #F5F5F5;
+  --usps-border: #D1D1D1;
+}
+
+.customer-chat-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: var(--usps-blue);
+  color: white;
+  padding: 16px;
+  border-radius: 50%;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  width: 60px;
+  height: 60px;
+  border: 2px solid #ffffff;
+  position: relative;
+}
+
+.customer-chat-button:hover {
+  background-color: var(--usps-light-blue);
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.unread-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: var(--usps-red);
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  border: 2px solid white;
+}
+
+.customer-chat-interface {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 380px;
+  height: 500px;
+  z-index: 10000;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--usps-border);
+}
+
+.chat-header {
+  background-color: var(--usps-blue);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.close-chat {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.close-chat:hover {
+  opacity: 0.8;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: var(--usps-light-gray);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  max-width: 70%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  position: relative;
+}
+
+.message.sent {
+  background-color: var(--usps-blue);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.message.received {
+  background-color: white;
+  border: 1px solid var(--usps-border);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.message-timestamp {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.message-input-form {
+  padding: 16px;
+  background-color: white;
+  border-top: 1px solid var(--usps-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.message-input {
+  flex: 1;
+  border: 1px solid var(--usps-border);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.message-input:focus {
+  border-color: var(--usps-blue);
+}
+
+.send-button {
+  background-color: var(--usps-blue);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.send-button:hover {
+  background-color: var(--usps-light-blue);
+}
+
+.chat-loading,
+.chat-error {
+  padding: 20px;
+  text-align: center;
+  color: var(--usps-gray);
+}
+
+.chat-error {
+  color: var(--usps-red);
+} 

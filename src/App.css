@@ -1,1 +1,34 @@
-@import "tailwindcss";
+.support-chat-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background-color: #2a72d4;
+    color: white;
+    padding: 12px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+  }
+  
+  .support-chat-button:hover {
+    background-color: #1d58ac;
+  }
+  
+  .support-chat-popup {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 350px;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+  

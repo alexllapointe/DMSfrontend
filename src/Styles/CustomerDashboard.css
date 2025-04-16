@@ -1,0 +1,325 @@
+:root {
+    --usps-blue: #004B87;
+    --usps-red: #E31837;
+    --usps-light-blue: #0073CF;
+    --usps-gray: #F5F5F5;
+    --usps-dark-gray: #333333;
+    --usps-border: #E0E0E0;
+    --usps-success: #28A745;
+    --usps-warning: #FFC107;
+    --usps-error: #DC3545;
+    --usps-text: #333333;
+    --usps-text-light: #666666;
+    --usps-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --usps-radius: 4px;
+    --usps-transition: all 0.3s ease;
+}
+
+.customer-dashboard {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--usps-text);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--usps-border);
+}
+
+.dashboard-header h1 {
+    color: var(--usps-blue);
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.user-info {
+    font-size: 16px;
+    color: var(--usps-text-light);
+}
+
+.dashboard-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--usps-border);
+    padding-bottom: 10px;
+}
+
+.tab-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-radius: var(--usps-radius);
+    color: var(--usps-text-light);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--usps-transition);
+}
+
+.tab-button:hover {
+    background-color: var(--usps-gray);
+    color: var(--usps-blue);
+}
+
+.tab-button.active {
+    background-color: var(--usps-blue);
+    color: white;
+}
+
+.tab-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.dashboard-content {
+    background-color: white;
+    border-radius: var(--usps-radius);
+    box-shadow: var(--usps-shadow);
+    padding: 20px;
+    min-height: 500px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    color: var(--usps-blue);
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.search-form {
+    flex: 1;
+    max-width: 400px;
+    margin-left: 20px;
+}
+
+.search-input-container {
+    display: flex;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--usps-border);
+    border-radius: var(--usps-radius);
+    font-size: 14px;
+    transition: var(--usps-transition);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--usps-blue);
+    box-shadow: 0 0 0 2px rgba(0, 75, 135, 0.2);
+}
+
+.search-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--usps-text-light);
+    cursor: pointer;
+    transition: var(--usps-transition);
+}
+
+.search-button:hover {
+    color: var(--usps-blue);
+}
+
+.orders-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.order-card {
+    border: 1px solid var(--usps-border);
+    border-radius: var(--usps-radius);
+    padding: 15px;
+    transition: var(--usps-transition);
+}
+
+.order-card:hover {
+    box-shadow: var(--usps-shadow);
+    transform: translateY(-2px);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--usps-border);
+}
+
+.order-id {
+    font-weight: 600;
+    color: var(--usps-blue);
+}
+
+.order-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.status-delivered {
+    color: var(--usps-success);
+}
+
+.status-in-transit {
+    color: var(--usps-warning);
+}
+
+.status-processing {
+    color: var(--usps-blue);
+}
+
+.order-details {
+    margin-bottom: 15px;
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.detail-label {
+    width: 140px;
+    color: var(--usps-text-light);
+}
+
+.detail-value {
+    flex: 1;
+    font-weight: 500;
+}
+
+.order-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-button {
+    flex: 1;
+    padding: 8px 15px;
+    background-color: var(--usps-blue);
+    color: white;
+    border: none;
+    border-radius: var(--usps-radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--usps-transition);
+}
+
+.action-button:hover {
+    background-color: var(--usps-light-blue);
+}
+
+.tracking-section, .locations-section {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.tracking-form, .locations-search {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.tracking-input, .location-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid var(--usps-border);
+    border-radius: var(--usps-radius);
+    font-size: 16px;
+}
+
+.track-button, .search-location-button {
+    padding: 12px 25px;
+    background-color: var(--usps-blue);
+    color: white;
+    border: none;
+    border-radius: var(--usps-radius);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--usps-transition);
+}
+
+.track-button:hover, .search-location-button:hover {
+    background-color: var(--usps-light-blue);
+}
+
+.tracking-info, .locations-map {
+    margin-top: 30px;
+    color: var(--usps-text-light);
+}
+
+.loading-state, .error-state, .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--usps-text-light);
+    font-size: 16px;
+}
+
+.error-state {
+    color: var(--usps-error);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .search-form {
+        max-width: 100%;
+        margin-left: 0;
+        margin-top: 15px;
+    }
+    
+    .orders-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .tracking-form, .locations-search {
+        flex-direction: column;
+    }
+    
+    .track-button, .search-location-button {
+        width: 100%;
+    }
+} 

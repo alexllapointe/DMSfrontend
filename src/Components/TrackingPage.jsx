@@ -76,7 +76,12 @@ const TrackingPage = () => {
 
                     {/* 💬 Chat Section */}
                     <div className="chat-section-wrapper">
-                        <ChatBox driverId={driverId} managerId={managerId} />
+                        <ChatBox 
+                            senderId={driverId} 
+                            receiverId={managerId} 
+                            senderRole="driver" 
+                            receiverRole="manager" 
+                        />
                     </div>
                 </div>
             </div>
