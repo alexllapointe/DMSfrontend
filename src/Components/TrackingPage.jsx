@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Package, Truck, MapPin } from 'lucide-react';
 import '../Styles/TrackingPage.css';
+import ShippingSection from './ShippingSection';
+import LocationSection from './LocationSection';
+
 
 const TrackingPage = () => {
     const [activeBox, setActiveBox] = useState('track');
@@ -8,7 +11,7 @@ const TrackingPage = () => {
     const [trackedId, setTrackedId] = useState(null);
 
     const services = [
-        { id: 'rate', title: 'RATE & SHIP', icon: Package },
+        { id: 'ship', title: 'SHIP', icon: Package },
         { id: 'track', title: 'TRACK', icon: Truck },
         { id: 'locations', title: 'LOCATIONS', icon: MapPin },
     ];
@@ -64,17 +67,9 @@ const TrackingPage = () => {
                     </div>
                 );
             case 'locations':
-                return (
-                    <div className="locations-section">
-                        <ul>
-                            <li><strong>Location 1:</strong> 123 Main St, Bloomington, IN</li>
-                            <li><strong>Location 2:</strong> 456 Elm St, Indianapolis, IN</li>
-                            <li><strong>Location 3:</strong> 789 Oak St, Evansville, IN</li>
-                        </ul>
-                    </div>
-                );
-            case 'rate':
-                return <div className="rate-section">{/* Blank for now */}</div>;
+                return <LocationSection />
+            case 'ship':
+                return <ShippingSection />
             default:
                 return null;
         }
