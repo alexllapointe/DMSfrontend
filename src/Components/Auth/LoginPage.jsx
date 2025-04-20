@@ -51,7 +51,7 @@ const LoginPage = () => {
 
         const decoded = jwtDecode(token);
         localStorage.setItem('userEmail', decoded.sub);
-        localStorage.setItem('firstName', decoded.firstname);
+        // localStorage.setItem('firstName', decoded.firstname);
 
         alert("Login successful!");
         navigate('/');

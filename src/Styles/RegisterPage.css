@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #e0f7fa;
+    background: #f9f9f9;
 }
 
 .register-form-container {
@@ -18,7 +18,7 @@
 
 .register-title {
     text-align: center;
-    color: #0097a7;
+    color: #6b46c1;
     margin-bottom: 20px;
 }
 
@@ -51,7 +51,7 @@ input {
 
 input:focus {
     outline: none;
-    border-color: #0097a7;
+    border-color: #6b46c1;
 }
 
 button {
@@ -64,13 +64,13 @@ button {
 }
 
 .register-btn {
-    background-color: #0097a7;
+    background-color: #6b46c1;
     color: #fff;
     border: none;
 }
 
 .register-btn:hover {
-    background-color: #00796b;
+    background-color: #5a3aa5;
 }
 
 .google-btn {
@@ -84,7 +84,7 @@ button {
 }
 
 .sign-in-link {
-    color: #00796b;
+    color: #6b46c1;
     /* Same color as Register button */
     text-decoration: none;
 }

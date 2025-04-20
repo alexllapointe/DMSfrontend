@@ -1,22 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../Styles/Navbar.css';
-import { Menu, User, Search } from 'lucide-react';
+import { Menu, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [firstName, setFirstName] = useState(null);
+    const [userEmail, setUserEmail] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const storedName = localStorage.getItem('firstName');
-        if (storedName) setFirstName(storedName);
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const decoded = jwtDecode(token); // ✅ use jwtDecode instead of jwt_decode
+                setUserEmail(decoded.sub); // decoded.sub = email from Spring JWT
+            } catch (err) {
+                console.error('Invalid token:', err);
+                localStorage.removeItem('token');
+            }
+        }
     }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('userEmail');
-        localStorage.removeItem('firstName');
-        setFirstName(null);
-        window.location.reload(); // optional: refresh to reflect UI change
+        setUserEmail(null);
+        navigate('/login');
     };
 
     return (
@@ -28,9 +38,9 @@ const Navbar = () => {
                     </h1>
                 </div>
                 <div className="nav-right">
-                    {firstName ? (
+                    {userEmail ? (
                         <div className="nav-user">
-                            <span>Welcome, {firstName}</span>
+                            <span>{userEmail}</span>
                             <button onClick={handleLogout} className="logout-btn">Logout</button>
                         </div>
                     ) : (
@@ -39,9 +49,6 @@ const Navbar = () => {
                             <span>Sign Up / Login</span>
                         </a>
                     )}
-                    <a href="/search" className="nav-search">
-                        <Search size={20} />
-                    </a>
                 </div>
                 <div className="hamburger" onClick={() => setIsOpen(!isOpen)}>
                     <Menu size={28} />

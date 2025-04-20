@@ -3,8 +3,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #e0f7fa;
-    /* Same light blue background as the register page */
+    background: #f9f9f9;
 }
 
 .login-form-container {
@@ -17,7 +16,8 @@
 
 .login-title {
     text-align: center;
-    color: #00796b;
+    color: #6b46c1;
+
     /* Same teal color as the register button */
     margin-bottom: 20px;
 }
@@ -51,7 +51,7 @@ input {
 
 input:focus {
     outline: none;
-    border-color: #00796b;
+    border-color: #6b46c1;
     /* Same color as the title */
 }
 
@@ -65,15 +65,15 @@ button {
 }
 
 .login-btn {
-    background-color: #00796b;
+    background-color: #6b46c1;
     /* Same teal color as the register button */
     color: #fff;
     border: none;
 }
 
 .login-btn:hover {
-    background-color: #004d40;
-    /* Slightly darker shade on hover */
+    background-color: #5a3aa5
+        /* Slightly darker shade on hover */
 }
 
 .google-btn {
@@ -88,7 +88,7 @@ button {
 
 .forgot-password-link {
     text-align: center;
-    color: #00796b;
+    color: #6b46c1;
     text-decoration: none;
     font-size: 14px;
 }
@@ -98,7 +98,7 @@ button {
 }
 
 .sign-up-link {
-    color: #00796b;
+    color: #6b46c1;
     text-decoration: none;
 }
 
