@@ -1,0 +1,87 @@
+.dashboard-container {
+    display: flex;
+    height: calc(100vh - 70px);
+    margin-top: 70px;
+    /* Pushes content below fixed navbar */
+}
+
+.dashboard-cards {
+    width: 250px;
+    background-color: #f1edff;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 25px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #4b2db9;
+    transition: background 0.2s ease;
+}
+
+.dashboard-card:hover {
+    background-color: #e3d6ff;
+}
+
+.dashboard-title {
+    display: none;
+}
+
+.section-box {
+    flex: 1;
+    padding: 40px;
+    background-color: #fdfdff;
+    overflow-y: auto;
+}
+
+.order-card {
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 16px;
+    text-align: left;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.order-card select,
+.order-card input {
+    width: 100%;
+    max-width: 250px;
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.order-status .done {
+    border-left: 5px solid green;
+}
+
+.order-status .pending {
+    border-left: 5px solid orange;
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .dashboard-cards {
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        padding: 15px;
+    }
+
+    .dashboard-card {
+        flex-direction: column;
+        gap: 6px;
+        padding: 10px;
+    }
+}
