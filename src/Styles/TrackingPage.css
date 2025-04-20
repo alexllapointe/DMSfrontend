@@ -112,26 +112,30 @@ body {
 
 .tracking-input-container {
     display: flex;
-    gap: 0px;
+    /* adds space between input and button */
+    align-items: center;
 }
 
 .tracking-input {
     flex: 1;
-    padding: 12px;
+    height: 48px;
+    padding: 0 12px;
     border: 2px solid #ccc;
     font-size: 16px;
-    border-radius: 0;
     outline: none;
+    box-sizing: border-box;
 }
 
 .track-button {
-    padding: 12px 20px;
+    height: 48px;
+    width: 100px;
     background: #ea580c;
     color: white;
     border: none;
     font-size: 16px;
-    border-radius: 0;
     cursor: pointer;
+    box-sizing: border-box;
+    margin-bottom: 6px;
 }
 
 /* Links - Moved Under Search Box */
@@ -187,4 +191,55 @@ body {
 .service-icon {
     width: 48px;
     height: 48px;
+}
+
+.info-section {
+    background-color: white;
+    padding: 2rem;
+    margin: 3rem auto 2rem auto;
+    border-radius: 12px;
+    max-width: 900px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* .info-section:hover {
+    transform: translateY(-3px);
+} */
+
+.info-section h2 {
+    font-size: 1.8rem;
+    color: #6b46c1;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.info-section p {
+    font-size: 1rem;
+    color: #444;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.info-section ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.info-section li {
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.6;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.info-section li::before {
+    content: '✔';
+    position: absolute;
+    left: 0;
+    color: #6b46c1;
+    font-weight: bold;
 }
