@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Styles/LocationSection.css';
 
 const LocationSection = () => {
+    const navigate = useNavigate();
     const locations = [
         {
             city: 'Bloomington',
@@ -25,12 +27,16 @@ const LocationSection = () => {
         },
     ];
 
+    const handleClick = (name) => {
+        navigate(`/locations/${encodeURIComponent(name)}`);
+    };
+
     return (
         <div className="location-section">
             <h2 className="location-header">Available Locations</h2>
             <div className="location-list">
                 {locations.map((loc, index) => (
-                    <div className="location-card" key={index}>
+                    <div className="location-card" key={index} onClick={() => handleClick(loc.name)}>
                         <h3 className="location-name">{loc.name}</h3>
                         <p className="location-address">{loc.address}</p>
                         <p className="location-city">{loc.city}, IN</p>
