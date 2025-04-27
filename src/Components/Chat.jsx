@@ -7,11 +7,43 @@ const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [connected, setConnected] = useState(false);
+    const [roomId, setRoomId] = useState(null);
     const clientRef = useRef(null);
-    const roomId = '123'; // For testing, we'll use a hardcoded room ID
+    
+    // In a real app, these would come from your auth system
+    const currentUserId = '1'; // Current user's ID
+    const otherUserId = '2';   // The user you're chatting with
 
     useEffect(() => {
-        // Connect to WebSocket
+        // Create or get chat room first
+        createOrGetChatRoom();
+    }, []);
+
+    const createOrGetChatRoom = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/chat/rooms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    type: 'PRIVATE',
+                    participant1Id: currentUserId,
+                    participant2Id: otherUserId
+                })
+            });
+
+            if (response.ok) {
+                const room = await response.json();
+                setRoomId(room.id);
+                connectWebSocket(room.id);
+            }
+        } catch (error) {
+            console.error('Error creating chat room:', error);
+        }
+    };
+
+    const connectWebSocket = (chatRoomId) => {
         const client = new Client({
             webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
             onConnect: () => {
@@ -48,6 +80,7 @@ const Chat = () => {
     }, []);
 
     const fetchChatHistory = async () => {
+        if (!roomId) return;
         try {
             const response = await fetch(`http://localhost:8080/api/chat/rooms/${roomId}/messages`);
             if (response.ok) {
@@ -60,11 +93,12 @@ const Chat = () => {
     };
 
     const sendMessage = () => {
-        if (!messageInput.trim() || !connected) return;
+        if (!messageInput.trim() || !connected || !roomId) return;
 
         const message = {
             roomId,
             content: messageInput,
+            senderId: currentUserId,
             attachmentUrl: null,
             attachmentType: null
         };
@@ -94,6 +128,16 @@ const Chat = () => {
                             </ListItem>
                         ))}
                     </List>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                    <Button 
+                        variant="contained" 
+                        color="secondary" 
+                        onClick={closeRoom}
+                        sx={{ width: '150px' }}
+                    >
+                        Close Chat
+                    </Button>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
