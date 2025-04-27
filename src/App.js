@@ -7,7 +7,8 @@ import Support from "./Components/Support";
 import Login from "./Components/Auth/LoginPage";
 import DeliveryManagerDashboard from "./Components/DeliveryManagerDashboard";
 import Register from "./Components/Auth/RegisterPage";
-import LocationsMap from "./Components/LocationsMap"; // Make sure it's imported
+import LocationsMap from "./Components/LocationsMap";
+import Chat from "./Components/Chat";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/manager-dashboard" element={<DeliveryManagerDashboard />} />
 
         <Route path="/locations/:name" element={<LocationsMap />} />
+        <Route path="/chat" element={<Chat />} />
       </Routes>
       <Footer />
     </Router>
