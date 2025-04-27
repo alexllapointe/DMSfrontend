@@ -8,6 +8,7 @@ import {
     Typography, 
     Box 
 } from '@mui/material';
+import { getChatRooms } from '../lib/supabaseClient';
 
 const ChatList = ({ onSelectRoom }) => {
     const [rooms, setRooms] = useState([]);
@@ -19,11 +20,9 @@ const ChatList = ({ onSelectRoom }) => {
 
     const fetchRooms = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/chat/rooms/user/${currentUserId}`);
-            if (response.ok) {
-                const data = await response.json();
-                setRooms(data);
-            }
+            const { data, error } = await getChatRooms(currentUserId);
+            if (error) throw error;
+            setRooms(data || []);
         } catch (error) {
             console.error('Error fetching chat rooms:', error);
         }
@@ -63,5 +62,4 @@ const ChatList = ({ onSelectRoom }) => {
         </Paper>
     );
 };
-
 export default ChatList;

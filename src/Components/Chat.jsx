@@ -1,115 +1,61 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Paper, Typography, List, ListItem, ListItemText } from '@mui/material';
+import { getChatHistory, sendMessage, subscribeToMessages } from '../lib/supabaseClient';
 
-const Chat = () => {
+const Chat = ({ roomId, currentUserId }) => {
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
-    const [connected, setConnected] = useState(false);
-    const [roomId, setRoomId] = useState(null);
-    const clientRef = useRef(null);
-    
-    // In a real app, these would come from your auth system
-    const currentUserId = '1'; // Current user's ID
-    const otherUserId = '2';   // The user you're chatting with
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Create or get chat room first
-        createOrGetChatRoom();
-    }, []);
+        if (!roomId) return;
 
-    const createOrGetChatRoom = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/api/chat/rooms', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    type: 'PRIVATE',
-                    participant1Id: currentUserId,
-                    participant2Id: otherUserId
-                })
-            });
-
-            if (response.ok) {
-                const room = await response.json();
-                setRoomId(room.id);
-                connectWebSocket(room.id);
+        const loadMessages = async () => {
+            setLoading(true);
+            const { data, error } = await getChatHistory(roomId);
+            if (error) {
+                setError(error.message);
+            } else {
+                setMessages(data || []);
             }
-        } catch (error) {
-            console.error('Error creating chat room:', error);
-        }
-    };
+            setLoading(false);
+        };
 
-    const connectWebSocket = (chatRoomId) => {
-        const client = new Client({
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
-            onConnect: () => {
-                console.log('Connected to WebSocket');
-                setConnected(true);
-                
-                // Subscribe to the chat room
-                client.subscribe(`/topic/chat/${roomId}`, (message) => {
-                    const receivedMessage = JSON.parse(message.body);
-                    setMessages(prev => [...prev, receivedMessage]);
-                });
-            },
-            onDisconnect: () => {
-                console.log('Disconnected from WebSocket');
-                setConnected(false);
-            },
-            onError: (error) => {
-                console.error('WebSocket Error:', error);
-                setConnected(false);
-            }
+        loadMessages();
+
+        const unsubscribe = subscribeToMessages(roomId, (newMessage) => {
+            setMessages(prev => [newMessage, ...prev]);
         });
-
-        clientRef.current = client;
-        client.activate();
-
-        // Load chat history
-        fetchChatHistory();
 
         return () => {
-            if (client) {
-                client.deactivate();
-            }
+            unsubscribe();
         };
-    }, []);
+    }, [roomId]);
 
-    const fetchChatHistory = async () => {
-        if (!roomId) return;
-        try {
-            const response = await fetch(`http://localhost:8080/api/chat/rooms/${roomId}/messages`);
-            if (response.ok) {
-                const data = await response.json();
-                setMessages(data.content || []);
-            }
-        } catch (error) {
-            console.error('Error fetching chat history:', error);
+    const handleSendMessage = async () => {
+        if (!messageInput.trim() || !roomId) return;
+
+        const { error } = await sendMessage({
+            roomId,
+            senderId: currentUserId,
+            content: messageInput
+        });
+
+        if (error) {
+            setError(error.message);
+        } else {
+            setMessageInput('');
         }
     };
 
-    const sendMessage = () => {
-        if (!messageInput.trim() || !connected || !roomId) return;
+    if (loading) {
+        return <Box sx={{ p: 2 }}>Loading messages...</Box>;
+    }
 
-        const message = {
-            roomId,
-            content: messageInput,
-            senderId: currentUserId,
-            attachmentUrl: null,
-            attachmentType: null
-        };
-
-        clientRef.current.publish({
-            destination: '/app/chat.sendMessage',
-            body: JSON.stringify(message)
-        });
-
-        setMessageInput('');
-    };
+    if (error) {
+        return <Box sx={{ p: 2, color: 'error.main' }}>{error}</Box>;
+    }
 
     return (
         <Box sx={{ maxWidth: 600, margin: '0 auto', p: 2 }}>
@@ -119,38 +65,29 @@ const Chat = () => {
                 </Typography>
                 <Box sx={{ height: 400, overflow: 'auto', mb: 2 }}>
                     <List>
-                        {messages.map((msg, index) => (
-                            <ListItem key={index}>
+                        {messages.map((msg) => (
+                            <ListItem key={msg.id}>
                                 <ListItemText
                                     primary={msg.content}
-                                    secondary={`From: ${msg.senderId}`}
+                                    secondary={`From: ${msg.sender_id}`}
                                 />
                             </ListItem>
                         ))}
                     </List>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                    <Button 
-                        variant="contained" 
-                        color="secondary" 
-                        onClick={closeRoom}
-                        sx={{ width: '150px' }}
-                    >
-                        Close Chat
-                    </Button>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
                         fullWidth
                         value={messageInput}
                         onChange={(e) => setMessageInput(e.target.value)}
-                        placeholder="Type a message..."
-                        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                        placeholder="Type a message"
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     />
                     <Button
                         variant="contained"
-                        onClick={sendMessage}
-                        disabled={!connected}
+                        onClick={handleSendMessage}
+                        disabled={!messageInput.trim()}
+                        sx={{ minWidth: '100px' }}
                     >
                         Send
                     </Button>
