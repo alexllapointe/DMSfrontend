@@ -34,7 +34,7 @@ const LoginPage = () => {
 
     try {
       // Send POST request to the backend (Replace with your backend URL)
-      const response = await fetch("http://localhost:8080/login", {
+      const response = await fetch("https://dmsservice-latest.onrender.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

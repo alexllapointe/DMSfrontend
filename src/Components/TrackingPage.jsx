@@ -4,6 +4,7 @@ import '../Styles/TrackingPage.css';
 import LocationSection from './LocationSection';
 import TrackSection from './TrackSection';
 import ShippingSection from './ShippingSection.jsx';
+import SupportChatWidget from './SupportChatWidget';
 
 const TrackingPage = () => {
     const [activeBox, setActiveBox] = useState('track');
@@ -64,7 +65,7 @@ const TrackingPage = () => {
                     <h2>Why Delivery Management System?</h2>
                     <p>
                         The Delivery Management System offers a comprehensive platform for customers,
-                        delivery service managers, and delivery drivers. Here’s a quick overview:
+                        delivery service managers, and delivery drivers. Here's a quick overview:
                     </p>
                     <ul>
                         <li>
@@ -86,6 +87,14 @@ const TrackingPage = () => {
                     </ul>
                 </div>
             </div>
+            <SupportChatWidget
+                roomId={"customer-manager-room-1"}
+                senderId={"customer-1"}
+                senderRole={"customer"}
+                receiverId={"manager-1"}
+                receiverRole={"manager"}
+                quickReplyType={null}
+            />
         </div>
     );
 };

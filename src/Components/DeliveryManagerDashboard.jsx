@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import '../Styles/DeliveryManagerDashboard.css';
 import { Truck, ClipboardList, DollarSign } from 'lucide-react';
+import ChatList from './ChatList';
+import ChatBox from './ChatBox';
+import { Drawer, IconButton } from '@mui/material';
+import ChatIcon from '@mui/icons-material/Chat';
 
 // Dummy data
 const unassignedOrders = [
@@ -24,6 +28,9 @@ const DeliveryManagerDashboard = () => {
   const [activeSection, setActiveSection] = useState('');
   const [assignments, setAssignments] = useState({});
   const [serviceList, setServiceList] = useState(services);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [currentUserId] = useState('manager-1'); // Replace with real auth
 
   const assignDriver = (orderId, driver) => {
     setAssignments(prev => ({ ...prev, [orderId]: driver }));
@@ -95,23 +102,45 @@ const DeliveryManagerDashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
-      <h2 className="dashboard-title">Delivery Manager Dashboard</h2>
-      <div className="dashboard-cards">
-        <div className="dashboard-card" onClick={() => setActiveSection('assign')}>
-          <Truck size={48} color="#7B4EF7" />
-          <p>Assign Deliveries</p>
+    <div className="dashboard-container" style={{ display: 'flex', height: '100vh' }}>
+      <div style={{ flex: 1 }}>
+        <h2 className="dashboard-title">Delivery Manager Dashboard</h2>
+        <div className="dashboard-cards">
+          <div className="dashboard-card" onClick={() => setActiveSection('assign')}>
+            <Truck size={48} color="#7B4EF7" />
+            <p>Assign Deliveries</p>
+          </div>
+          <div className="dashboard-card" onClick={() => setActiveSection('orders')}>
+            <ClipboardList size={48} color="#7B4EF7" />
+            <p>Customer Orders</p>
+          </div>
+          <div className="dashboard-card" onClick={() => setActiveSection('services')}>
+            <DollarSign size={48} color="#7B4EF7" />
+            <p>Manage Services</p>
+          </div>
         </div>
-        <div className="dashboard-card" onClick={() => setActiveSection('orders')}>
-          <ClipboardList size={48} color="#7B4EF7" />
-          <p>Customer Orders</p>
-        </div>
-        <div className="dashboard-card" onClick={() => setActiveSection('services')}>
-          <DollarSign size={48} color="#7B4EF7" />
-          <p>Manage Services</p>
-        </div>
+        {renderContent()}
       </div>
-      {renderContent()}
+      {/* Chat Sidebar */}
+      <div style={{ position: 'fixed', top: 80, right: 0, zIndex: 1200 }}>
+        <IconButton color="primary" onClick={() => setChatOpen(!chatOpen)}>
+          <ChatIcon />
+        </IconButton>
+      </div>
+      <Drawer anchor="right" open={chatOpen} onClose={() => setChatOpen(false)}>
+        <div style={{ width: 350, padding: 16, height: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <ChatList onSelectRoom={setSelectedRoom} />
+          {selectedRoom && (
+            <ChatBox
+              roomId={selectedRoom.id}
+              senderId={currentUserId}
+              senderRole={selectedRoom.type === 'driver-manager' ? 'manager' : 'manager'}
+              receiverRole={selectedRoom.type === 'driver-manager' ? 'driver' : 'customer'}
+              quickReplyType={selectedRoom.type === 'driver-manager' ? 'managerToDriver' : 'managerToCustomer'}
+            />
+          )}
+        </div>
+      </Drawer>
     </div>
   );
 };
