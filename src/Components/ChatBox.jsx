@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../Styles/ChatBox.css';
-import { getChatHistory, sendMessage, subscribeToMessages, markMessageDelivered, markMessageRead, sendTypingStatus } from '../lib/supabaseClient';
 import { X, Send } from 'lucide-react';
+import websocketService from '../services/websocketService';
 
 const quickReplies = {
     managerToDriver: [
@@ -44,79 +44,98 @@ const quickReplies = {
 };
 
 const ChatBox = ({ roomId, senderId, senderRole, receiverRole, quickReplyType, onClose, receiverName, receiverAvatar }) => {
-    // Show different mock messages for each room
-    let initialMessages = [];
-    if (roomId === 'driver-manager-ORD101') {
-        initialMessages = [
-            { id: 1, sender_id: 'manager456', content: 'New delivery assigned: Order #12345', created_at: new Date(Date.now() - 3600000).toISOString(), delivered: true, read: true },
-            { id: 2, sender_id: 'driver123', content: 'Received. Heading to pickup location now.', created_at: new Date(Date.now() - 3300000).toISOString(), delivered: true, read: true },
-            { id: 3, sender_id: 'manager456', content: 'Customer requested delivery before 5 PM', created_at: new Date(Date.now() - 3000000).toISOString(), delivered: true, read: true },
-            { id: 4, sender_id: 'driver123', content: 'Will make it on time. Currently 15 minutes away.', created_at: new Date(Date.now() - 2700000).toISOString(), delivered: true, read: true },
-            { id: 5, sender_id: 'manager456', content: 'Great! Keep me updated.', created_at: new Date(Date.now() - 2400000).toISOString(), delivered: true, read: false },
-        ];
-    } else if (roomId === 'driver-manager-ORD102') {
-        initialMessages = [
-            { id: 1, sender_id: senderId, content: 'Hi Spoorti, please update on your location.', created_at: new Date().toISOString(), delivered: true, read: true },
-            { id: 2, sender_id: 'Spoorti', content: 'On my way to the customer.', created_at: new Date(Date.now() - 60000).toISOString(), delivered: true, read: true },
-            { id: 3, sender_id: senderId, content: 'Please confirm pickup.', created_at: new Date(Date.now() - 120000).toISOString(), delivered: true, read: false },
-        ];
-    } else if (roomId === 'customer-ORD201') {
-        initialMessages = [
-            { id: 1, sender_id: 'Priya Sharma', content: 'When will my order arrive?', created_at: new Date().toISOString(), delivered: true, read: true },
-            { id: 2, sender_id: senderId, content: 'Your order is on the way! ETA: 3:00 PM.', created_at: new Date(Date.now() - 60000).toISOString(), delivered: true, read: true },
-            { id: 3, sender_id: senderId, content: 'Your order was assigned to Alex.', created_at: new Date(Date.now() - 120000).toISOString(), delivered: true, read: true },
-        ];
-    } else if (roomId === 'customer-ORD202') {
-        initialMessages = [
-            { id: 1, sender_id: 'Rahul Mehta', content: 'Can I change my delivery address?', created_at: new Date().toISOString(), delivered: true, read: true },
-            { id: 2, sender_id: senderId, content: 'Please provide the new address and we will update it.', created_at: new Date(Date.now() - 60000).toISOString(), delivered: true, read: true },
-            { id: 3, sender_id: senderId, content: 'Your order is pending and will be assigned soon.', created_at: new Date(Date.now() - 120000).toISOString(), delivered: true, read: true },
-        ];
-    } else if (roomId === 'customer-support') {
-        initialMessages = [
-            { id: 1, sender_id: senderId, content: 'Hello, I need help with an order.', created_at: new Date().toISOString(), delivered: true, read: true },
-            { id: 2, sender_id: 'Support', content: 'How can I help you?', created_at: new Date(Date.now() - 60000).toISOString(), delivered: true, read: true },
-        ];
-    } else if (roomId === 'manager-group') {
-        initialMessages = [
-            { id: 1, sender_id: 'Alex', content: 'Order ORD101 delivered.', created_at: new Date(Date.now() - 120000).toISOString(), delivered: true, read: true },
-            { id: 2, sender_id: 'Spoorti', content: 'On my way to the customer for ORD102.', created_at: new Date(Date.now() - 60000).toISOString(), delivered: true, read: true },
-            { id: 3, sender_id: senderId, content: 'Please update your delivery status.', created_at: new Date().toISOString(), delivered: true, read: true },
-        ];
-    }
-    const [messages, setMessages] = useState(initialMessages);
+    const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [error, setError] = useState(null);
     const [typing, setTyping] = useState(false);
     const [isSomeoneTyping, setIsSomeoneTyping] = useState(false);
     const chatMessagesRef = useRef(null);
+    const typingTimeoutRef = useRef(null);
+
+    useEffect(() => {
+        // Connect to WebSocket if not already connected
+        if (!websocketService.connected) {
+            websocketService.connect(senderId);
+        }
+
+        // Join the chat room
+        websocketService.joinRoom(roomId, senderId);
+
+        // Set up message handler
+        websocketService.onMessage((message) => {
+            if (message.roomId === roomId) {
+                setMessages(prev => [...prev, message]);
+                if (message.senderId !== senderId) {
+                    websocketService.sendMessage(roomId, {
+                        messageId: message.id,
+                        status: 'delivered'
+                    });
+                }
+            }
+        });
+
+        // Set up typing status handler
+        websocketService.onTypingStatus((roomId, userId, isTyping) => {
+            if (roomId === roomId && userId !== senderId) {
+                setIsSomeoneTyping(isTyping);
+            }
+        });
+
+        // Load message history
+        const loadMessages = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/chat/messages/${roomId}`);
+                if (!response.ok) throw new Error('Failed to load messages');
+                const data = await response.json();
+                setMessages(data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+        loadMessages();
+
+        // Cleanup
+        return () => {
+            websocketService.leaveRoom(roomId);
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
+        };
+    }, [roomId, senderId]);
 
     const handleSendMessage = async (msg) => {
         const content = msg || messageInput;
         if (!content.trim() || !roomId) return;
-        // Add the new message to the chat at the end
-        setMessages(prev => [
-            ...prev,
-            {
-                id: prev.length + 1,
-                sender_id: senderId,
-                content,
-                created_at: new Date().toISOString(),
-                delivered: true,
-                read: true
-            }
-        ]);
+
+        const message = {
+            senderId,
+            senderRole,
+            content,
+            roomId,
+            created_at: new Date().toISOString()
+        };
+
+        websocketService.sendMessage(roomId, message);
         setMessageInput('');
         setTyping(false);
     };
 
     const handleInputChange = (e) => {
         setMessageInput(e.target.value);
-        setTyping(true);
-        sendTypingStatus(roomId, senderId, true);
-        setTimeout(() => {
+        if (!typing) {
+            setTyping(true);
+            websocketService.sendTypingStatus(roomId, senderId, true);
+        }
+
+        // Clear existing timeout
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+
+        // Set new timeout
+        typingTimeoutRef.current = setTimeout(() => {
             setTyping(false);
-            sendTypingStatus(roomId, senderId, false);
+            websocketService.sendTypingStatus(roomId, senderId, false);
         }, 2000);
     };
 
@@ -162,16 +181,16 @@ const ChatBox = ({ roomId, senderId, senderRole, receiverRole, quickReplyType, o
                         {messages.map((msg) => (
                             <div
                                 key={msg.id}
-                                className={msg.sender_id === senderId ? 'msg-sent' : 'msg-received'}
+                                className={msg.senderId === senderId ? 'msg-sent' : 'msg-received'}
                             >
                                 <div className="message-bubble">
                                     {roomId === 'manager-group' && (
-                                        <span style={{ fontWeight: 600, color: '#0a3977', marginRight: 6, fontSize: 13 }}>{msg.sender_id}:</span>
+                                        <span style={{ fontWeight: 600, color: '#0a3977', marginRight: 6, fontSize: 13 }}>{msg.senderId}:</span>
                                     )}
                                     {msg.content}
                                     <div className="timestamp">
-                                        {new Date(msg.created_at || msg.timestamp).toLocaleString()}
-                                        {msg.sender_id === senderId && (
+                                        {new Date(msg.created_at).toLocaleString()}
+                                        {msg.senderId === senderId && (
                                             <>
                                                 {msg.delivered && <span style={{ marginLeft: 8, color: '#2a72d4' }}>✓</span>}
                                                 {msg.read && <span style={{ marginLeft: 2, color: 'green' }}>✓✓</span>}
