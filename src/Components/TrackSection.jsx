@@ -61,24 +61,10 @@ const TrackSection = () => {
             {trackingData && (
                 <>
                     <div className="status-box">
-                        <h2>{trackingData.currentLocation}</h2>
+                        <h2>Last updated: <span>{trackingData.currentLocation}</span></h2>
                         <p>{trackingData.lastUpdated}</p>
                     </div>
                     <div className="progress-bar"></div>
-                    {trackingData.location && (
-                        <div className="map-container">
-                            <iframe
-                                title="Package Location"
-                                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB4648Z4QhnHEkZTgButk_erzUydZtZfJM&q=${encodeURIComponent(`420 S College Ave, Bloomington, IN 47403
-
-`)}`}
-                                width="100%"
-                                height="300"
-                                style={{ border: 0, borderRadius: '10px', marginTop: '1rem' }}
-                                allowFullScreen
-                            ></iframe>
-                        </div>
-                    )}
                 </>
             )}
         </div>

@@ -111,7 +111,7 @@ const LoginPage = ({ setUserRole }) => {
             </button>
           </div>
           <div className="form-group">
-            <a href="#forgot-password" className="forgot-password-link">
+            <a href="/forgot-password" className="forgot-password-link">
               Forgot Password?
             </a>
           </div>

@@ -18,7 +18,7 @@ const VerifyEmail = () => {
         }
 
         try {
-            const response = await fetch("http://localhost:8080/verify-email", {
+            const response = await fetch("https://dmsservice-latest.onrender.com/verify-email", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
