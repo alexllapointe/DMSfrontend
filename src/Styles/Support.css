@@ -1,0 +1,45 @@
+/* Support.css */
+
+.support-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f4f6;
+    /* light gray background */
+    padding: 2rem;
+}
+
+.support-box {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.support-box h2 {
+    font-size: 1.8rem;
+    color: #6b46c1;
+    margin-bottom: 1rem;
+}
+
+.support-box p {
+    font-size: 1rem;
+    color: #333;
+    margin: 0.5rem 0;
+}
+
+.support-email a {
+    color: #6b46c1;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+.support-email a:hover {
+    text-decoration: underline;
+}

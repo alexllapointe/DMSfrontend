@@ -1,0 +1,46 @@
+.location-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.location-header {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.location-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.location-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    transition: background 0.3s ease-in-out;
+}
+
+.location-card:hover {
+    background-color: #f1f1f1;
+}
+
+.location-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.location-address,
+.location-city {
+    font-size: 14px;
+    color: #555;
+}

@@ -1,0 +1,102 @@
+.shipping-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.step {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    /* gray-200 */
+    color: #4b5563;
+    /* gray-600 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.step.active {
+    background-color: #6b46c1;
+    /* matching purple */
+    color: white;
+    border-color: #6b46c1;
+}
+
+.step-line {
+    font-weight: bold;
+    color: #999;
+    font-size: 18px;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-section h3 {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #333;
+    margin-top: 20px;
+}
+
+.form-section input[type="text"],
+.form-section input[type="email"] {
+    padding: 12px;
+    border: 2px solid #ccc;
+    font-size: 16px;
+    border-radius: 6px;
+    outline: none;
+    background-color: #fff;
+}
+
+.form-section input[type="checkbox"] {
+    margin-right: 6px;
+}
+
+.form-section label {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Button Container */
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Buttons */
+.form-section button {
+    background: #6b46c1;
+    color: white;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.form-section button:hover {
+    background: #553c9a;
+}
+
+/* Optional: Progress bar or visual feedback can be reused if needed */
