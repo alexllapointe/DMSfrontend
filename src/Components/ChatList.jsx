@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    List, 
-    ListItem, 
-    ListItemText, 
-    ListItemButton, 
-    Paper, 
-    Typography, 
+import {
+    List,
+    ListItem,
+    ListItemText,
+    ListItemButton,
+    Paper,
+    Typography,
     Box,
     Avatar,
     Badge
@@ -76,8 +76,8 @@ const ChatList = ({ onSelectRoom, unreadCounts = {} }) => {
     }, [rooms]);
 
     const getOtherParticipant = (room) => {
-        return room.participant1Id === currentUserId 
-            ? room.participant2Id 
+        return room.participant1Id === currentUserId
+            ? room.participant2Id
             : room.participant1Id;
     };
 

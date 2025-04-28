@@ -1,31 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../Styles/Navbar.css';
 import { Menu, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { useNavigate, Link } from 'react-router-dom';
 
-const Navbar = () => {
+const Navbar = ({ userRole, setUserRole }) => {  // ✅ receive from props
     const [isOpen, setIsOpen] = useState(false);
-    const [userEmail, setUserEmail] = useState(null);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            try {
-                const decoded = jwtDecode(token); // ✅ use jwtDecode instead of jwt_decode
-                setUserEmail(decoded.sub); // decoded.sub = email from Spring JWT
-            } catch (err) {
-                console.error('Invalid token:', err);
-                localStorage.removeItem('token');
-            }
-        }
-    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('userEmail');
-        setUserEmail(null);
+        setUserRole(null); // ✅ clear global state
         navigate('/login');
     };
 
@@ -34,22 +19,30 @@ const Navbar = () => {
             <div className="nav-container">
                 <div className="nav-left">
                     <h1 className="nav-logo">
-                        <a href="/">DMS</a>
+                        <Link to="/">DMS</Link>
                     </h1>
+
+                    {/* Show dashboard links ONLY for Manager and Driver */}
+                    {userRole === 'ROLE_MANAGER' && (
+                        <Link to="/manager-dashboard" className="manager-dashboard-link">Manager Dashboard</Link>
+                    )}
+                    {userRole === 'ROLE_DRIVER' && (
+                        <Link to="/driver-dashboard" className="driver-dashboard-link">Driver Dashboard</Link>
+                    )}
+                    {/* No dashboard link for ROLE_USER */}
                 </div>
+
                 <div className="nav-right">
-                    {userEmail ? (
-                        <div className="nav-user">
-                            <span>{userEmail}</span>
-                            <button onClick={handleLogout} className="logout-btn">Logout</button>
-                        </div>
+                    {userRole ? (
+                        <span onClick={handleLogout} className="logout-link" role="link" tabIndex={0}>Logout</span>
                     ) : (
-                        <a href="/login" className="nav-auth">
+                        <Link to="/login" className="nav-auth">
                             <User size={20} />
                             <span>Sign Up / Login</span>
-                        </a>
+                        </Link>
                     )}
                 </div>
+
                 <div className="hamburger" onClick={() => setIsOpen(!isOpen)}>
                     <Menu size={28} />
                 </div>

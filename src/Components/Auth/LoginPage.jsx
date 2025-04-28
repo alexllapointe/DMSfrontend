@@ -3,14 +3,12 @@ import '../../Styles/LoginPage.css';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-const LoginPage = () => {
-  // State for form fields
+const LoginPage = ({ setUserRole }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  // Password validation (for example, checking length)
   const validatePassword = () => {
     if (password.length < 8) {
       setErrorMessage("Password must be at least 8 characters long.");
@@ -19,21 +17,18 @@ const LoginPage = () => {
     return true;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("[handleSubmit] Submit button clicked");
 
-    // Validate password
-    if (!validatePassword()) return;
+    if (!validatePassword()) {
+      console.log("[handleSubmit] Password validation failed");
+      return;
+    }
 
-    // Prepare data to be sent to the backend
-    const formData = {
-      email,
-      password,
-    };
+    const formData = { email, password };
 
     try {
-      // Send POST request to the backend (Replace with your backend URL)
       const response = await fetch("https://dmsservice-latest.onrender.com/login", {
         method: "POST",
         headers: {
@@ -42,22 +37,27 @@ const LoginPage = () => {
         body: JSON.stringify(formData),
       });
 
-
+      console.log("[handleSubmit] Received response:", response);
 
       if (response.ok) {
         const token = await response.text();
-        console.log("here")
+        console.log("[handleSubmit] Login successful, token received:", token);
+
         localStorage.setItem('token', token);
 
         const decoded = jwtDecode(token);
+        console.log("[handleSubmit] Decoded JWT:", decoded);
+
         localStorage.setItem('userEmail', decoded.sub);
-        // localStorage.setItem('firstName', decoded.firstname);
+        setUserRole(decoded.scope);
 
         alert("Login successful!");
         navigate('/');
       } else {
-        console.log("till here")
+        console.log("[handleSubmit] Login failed, parsing error response...");
         const errorData = await response.json();
+        console.log("[handleSubmit] Error data from server:", errorData);
+
         if (errorData.message === "Bad credentials") {
           setErrorMessage("Invalid email or password. If you're new, please register first.");
         } else {
@@ -66,6 +66,7 @@ const LoginPage = () => {
       }
 
     } catch (error) {
+      console.error("[handleSubmit] Network or unexpected error:", error);
       setErrorMessage("Network error: Unable to contact the server.");
     }
   };

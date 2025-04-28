@@ -1,11 +1,33 @@
 import React, { useState } from 'react';
+import '../Styles/TrackSection.css';
 
 const TrackSection = () => {
     const [trackingId, setTrackingId] = useState('');
-    const [trackedId, setTrackedId] = useState(null);
+    const [trackingData, setTrackingData] = useState(null);
+    const [error, setError] = useState('');
 
-    const handleTrack = () => {
-        setTrackedId(trackingId.trim());
+    const handleTrack = async () => {
+        const trimmedId = trackingId.trim();
+        if (!trimmedId) {
+            setError('Please enter a tracking ID');
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://dmsservice-latest.onrender.com/track/byId?trackingId=${trimmedId}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setTrackingData(data);
+                setError('');
+            } else {
+                setTrackingData(null);
+                setError('No package found with this tracking ID');
+            }
+        } catch (err) {
+            setTrackingData(null);
+            setError('Error fetching tracking information');
+        }
     };
 
     return (
@@ -30,23 +52,33 @@ const TrackSection = () => {
                 </div>
             </div>
 
-            {trackedId === '123' && (
+            {error && (
+                <div className="error-message">
+                    {error}
+                </div>
+            )}
+
+            {trackingData && (
                 <>
                     <div className="status-box">
-                        <h2>Delivered</h2>
-                        <p>Thursday 12/05/2019 at 1:06 pm</p>
+                        <h2>{trackingData.currentLocation}</h2>
+                        <p>{trackingData.lastUpdated}</p>
                     </div>
                     <div className="progress-bar"></div>
-                    <div className="map-container">
-                        <iframe
-                            title="Luddy School Map"
-                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyB4648Z4QhnHEkZTgButk_erzUydZtZfJM&q=Luddy+School+of+Informatics,Bloomington,IN"
-                            width="100%"
-                            height="300"
-                            style={{ border: 0, borderRadius: '10px', marginTop: '1rem' }}
-                            allowFullScreen
-                        ></iframe>
-                    </div>
+                    {trackingData.location && (
+                        <div className="map-container">
+                            <iframe
+                                title="Package Location"
+                                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB4648Z4QhnHEkZTgButk_erzUydZtZfJM&q=${encodeURIComponent(`420 S College Ave, Bloomington, IN 47403
+
+`)}`}
+                                width="100%"
+                                height="300"
+                                style={{ border: 0, borderRadius: '10px', marginTop: '1rem' }}
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+                    )}
                 </>
             )}
         </div>

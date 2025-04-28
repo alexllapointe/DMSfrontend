@@ -177,13 +177,13 @@ const DeliveryManagerDashboard = () => {
                 senderRole={selectedRoom.type === 'driver-manager' ? 'manager' : 'manager'}
                 receiverRole={selectedRoom.type === 'driver-manager' ? 'driver' : 'customer'}
                 quickReplyType={selectedRoom.type === 'driver-manager' ? 'managerToDriver' : 'managerToCustomer'}
-                { ...(selectedRoom.type === 'driver-manager' ? {
+                {...(selectedRoom.type === 'driver-manager' ? {
                   receiverName: selectedRoom.participant2Id || selectedRoom.driver,
                   receiverAvatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedRoom.participant2Id || selectedRoom.driver)}&background=0a3977&color=fff&size=64`
                 } : selectedRoom.type === 'customer' ? {
                   receiverName: selectedRoom.customerName,
                   receiverAvatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedRoom.customerName)}&background=0a3977&color=fff&size=64`
-                } : {}) }
+                } : {})}
                 onClose={() => setSelectedRoom(null)}
               />
             )}
