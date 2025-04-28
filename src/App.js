@@ -11,6 +11,7 @@ import VerifyEmail from "./Components/Auth/VerifyEmail";
 import LocationsMap from "./Components/LocationsMap";
 import Chat from "./Components/Chat";
 import DriverDashboard from "./Components/DriverDashboard";
+import PaymentSuccess from "./Components/PaymentSuccess";
 
 function App() {
   const [userRole, setUserRole] = useState(null);
@@ -38,6 +39,7 @@ function App() {
         <Route path="/verifyemail" element={<VerifyEmail />} />
         <Route path="/manager-dashboard" element={<DeliveryManagerDashboard />} />
         <Route path="/driver-dashboard" element={<DriverDashboard />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/locations/:name" element={<LocationsMap />} />
         <Route path="/chat" element={<Chat />} />
       </Routes>

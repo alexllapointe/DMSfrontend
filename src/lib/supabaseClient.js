@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+const supabaseUrl = "https://gewbkfuafhqyxpkydayb.supabase.co"
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdld2JrZnVhZmhxeXhwa3lkYXliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3ODUyNjAsImV4cCI6MjA2MTM2MTI2MH0.jBTU40c5Qff4erxW6ixev8KyZvAjIgNMJ1DM0DIZoNE"
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
@@ -88,6 +89,44 @@ export const subscribeToMessages = (roomId, callback) => {
   return () => {
     supabase.removeChannel(subscription);
   };
+};
+
+// Mark message as delivered
+export const markMessageDelivered = async (messageId) => {
+  try {
+    await fetch(`/api/chat/messages/${messageId}/delivered`, { method: 'POST' });
+  } catch (error) {
+    console.error('Error marking message delivered:', error);
+  }
+};
+
+// Mark message as read
+export const markMessageRead = async (messageId) => {
+  try {
+    await fetch(`/api/chat/messages/${messageId}/read`, { method: 'POST' });
+  } catch (error) {
+    console.error('Error marking message read:', error);
+  }
+};
+
+// Send typing status
+export const sendTypingStatus = async (roomId, userId, typing) => {
+  try {
+    await fetch(`/api/chat/rooms/${roomId}/typing?userId=${userId}&typing=${typing}`, { method: 'POST' });
+  } catch (error) {
+    console.error('Error sending typing status:', error);
+  }
+};
+
+// Get user presence
+export const getUserPresence = async (userId) => {
+  try {
+    const res = await fetch(`/api/chat/presence/${userId}`);
+    if (!res.ok) return { online: false };
+    return await res.json();
+  } catch (error) {
+    return { online: false };
+  }
 };
 
 // Types (for TypeScript projects)

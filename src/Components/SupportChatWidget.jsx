@@ -4,7 +4,7 @@ import ChatBox from "./ChatBox";
 import { MessageCircle } from "lucide-react";
 import "../Styles/SupportChat.css";
 
-const SupportChatWidget = ({ customerId, managerId }) => {
+const SupportChatWidget = ({ roomId, senderId, senderRole, receiverId, receiverRole, quickReplyType }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -16,10 +16,12 @@ const SupportChatWidget = ({ customerId, managerId }) => {
             {isOpen && (
                 <div className="support-chat-popup">
                     <ChatBox
-                        senderId={customerId}
-                        receiverId={managerId}
-                        senderRole="customer"
-                        receiverRole="manager"
+                        roomId={roomId}
+                        senderId={senderId}
+                        senderRole={senderRole}
+                        receiverRole={receiverRole}
+                        quickReplyType={quickReplyType}
+                        onClose={() => setIsOpen(false)}
                     />
                 </div>
             )}
