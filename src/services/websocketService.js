@@ -4,148 +4,126 @@ import { Stomp } from '@stomp/stompjs';
 class WebSocketService {
     constructor() {
         this.stompClient = null;
-        this.subscriptions = new Map();
-        this.messageHandlers = new Map();
         this.connected = false;
+        this.messageHandlers = new Set();
+        this.typingHandlers = new Set();
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 3;
+        this.reconnectDelay = 2000;
     }
 
-    connect(userId, onConnect = () => {}) {
-        const socket = new SockJS('http://localhost:8080/ws');
-        this.stompClient = Stomp.over(socket);
-
-        this.stompClient.connect({}, () => {
-            this.connected = true;
-            console.log('WebSocket Connected');
-
-            // Subscribe to personal messages
-            this.subscribe(`/topic/user/${userId}`, (message) => {
-                this.handleMessage(JSON.parse(message.body));
-            });
-
-            // Subscribe to presence updates
-            this.subscribe('/topic/presence', (message) => {
-                const [userId, status] = message.body.split(':');
-                this.handlePresenceUpdate(userId, status);
-            });
-
-            onConnect();
-        }, this.onError);
-
-        // Reconnect on connection loss
-        socket.onclose = () => {
-            this.connected = false;
-            console.log('WebSocket Connection Lost. Reconnecting...');
-            setTimeout(() => this.connect(userId, onConnect), 5000);
-        };
+    connect(userId) {
+        return new Promise((resolve, reject) => {
+            try {
+                const socket = new SockJS('http://localhost:8080/ws');
+                this.stompClient = Stomp.over(socket);
+                
+                this.stompClient.connect(
+                    {},
+                    () => {
+                        this.connected = true;
+                        this.reconnectAttempts = 0;
+                        console.log('WebSocket Connected');
+                        this.subscribeToUserQueue(userId);
+                        resolve();
+                    },
+                    (error) => {
+                        console.error('WebSocket connection error:', error);
+                        this.connected = false;
+                        this.handleConnectionError(userId, reject);
+                    }
+                );
+            } catch (error) {
+                console.error('Failed to create WebSocket connection:', error);
+                this.connected = false;
+                reject(error);
+            }
+        });
     }
 
-    subscribe(destination, callback) {
-        if (!this.stompClient) return;
-
-        const subscription = this.stompClient.subscribe(destination, callback);
-        this.subscriptions.set(destination, subscription);
-        return () => this.unsubscribe(destination);
-    }
-
-    unsubscribe(destination) {
-        const subscription = this.subscriptions.get(destination);
-        if (subscription) {
-            subscription.unsubscribe();
-            this.subscriptions.delete(destination);
+    handleConnectionError(userId, reject) {
+        this.connected = false;
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++;
+            console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
+            setTimeout(() => {
+                this.connect(userId).catch(reject);
+            }, this.reconnectDelay);
+        } else {
+            console.error('Max reconnection attempts reached');
+            reject(new Error('Failed to establish WebSocket connection after multiple attempts'));
         }
     }
 
-    // Send a chat message
-    sendMessage(roomId, message) {
-        if (!this.stompClient || !this.connected) return;
-
-        this.stompClient.send('/app/chat.send', {}, JSON.stringify({
-            roomId,
-            ...message
-        }));
-    }
-
-    // Send typing status
-    sendTypingStatus(roomId, userId, isTyping) {
-        if (!this.stompClient || !this.connected) return;
-
-        this.stompClient.send('/app/chat.typing', {}, 
-            `${userId}:${roomId}:${isTyping ? 'typing' : 'stopped'}`
-        );
-    }
-
-    // Join a chat room
-    joinRoom(roomId, userId) {
-        if (!this.stompClient || !this.connected) return;
-
-        // Subscribe to room messages
-        this.subscribe(`/topic/room/${roomId}`, (message) => {
-            this.handleMessage(JSON.parse(message.body));
-        });
-
-        // Subscribe to typing indicators for this room
-        this.subscribe(`/topic/room/${roomId}/typing`, (message) => {
-            const [userId, status] = message.body.split(':');
-            this.handleTypingStatus(roomId, userId, status === 'typing');
-        });
-    }
-
-    // Leave a chat room
-    leaveRoom(roomId) {
-        this.unsubscribe(`/topic/room/${roomId}`);
-        this.unsubscribe(`/topic/room/${roomId}/typing`);
-    }
-
-    // Register message handler
-    onMessage(handler) {
-        this.messageHandlers.set('message', handler);
-    }
-
-    // Register presence update handler
-    onPresenceUpdate(handler) {
-        this.messageHandlers.set('presence', handler);
-    }
-
-    // Register typing status handler
-    onTypingStatus(handler) {
-        this.messageHandlers.set('typing', handler);
-    }
-
-    // Internal message handler
-    handleMessage(message) {
-        const handler = this.messageHandlers.get('message');
-        if (handler) handler(message);
-    }
-
-    // Internal presence update handler
-    handlePresenceUpdate(userId, status) {
-        const handler = this.messageHandlers.get('presence');
-        if (handler) handler(userId, status);
-    }
-
-    // Internal typing status handler
-    handleTypingStatus(roomId, userId, isTyping) {
-        const handler = this.messageHandlers.get('typing');
-        if (handler) handler(roomId, userId, isTyping);
-    }
-
-    // Handle connection errors
-    onError(error) {
-        console.error('WebSocket Error:', error);
-        this.connected = false;
-    }
-
-    // Disconnect
     disconnect() {
-        if (this.stompClient) {
-            this.subscriptions.forEach(sub => sub.unsubscribe());
-            this.subscriptions.clear();
+        if (this.stompClient && this.connected) {
             this.stompClient.disconnect();
             this.connected = false;
+            this.messageHandlers.clear();
+            this.typingHandlers.clear();
         }
+    }
+
+    subscribeToUserQueue(userId) {
+        if (!this.connected) {
+            throw new Error('WebSocket not connected');
+        }
+
+        // Subscribe to user-specific queue
+        this.stompClient.subscribe(`/user/${userId}/queue/messages`, (message) => {
+            const messageData = JSON.parse(message.body);
+            this.messageHandlers.forEach(handler => handler(messageData));
+        });
+
+        // Subscribe to typing notifications
+        this.stompClient.subscribe(`/user/${userId}/queue/typing`, (message) => {
+            const [senderId, status] = message.body.split(':');
+            this.typingHandlers.forEach(handler => handler(senderId, status === 'typing'));
+        });
+    }
+
+    joinRoom(roomId, userId) {
+        if (!this.connected) {
+            throw new Error('WebSocket not connected');
+        }
+        this.stompClient.send('/app/chat.join', {}, JSON.stringify({ roomId, userId }));
+    }
+
+    leaveRoom(roomId) {
+        if (this.connected) {
+            this.stompClient.send('/app/chat.leave', {}, roomId);
+        }
+    }
+
+    sendMessage(roomId, message) {
+        if (!this.connected) {
+            throw new Error('WebSocket not connected');
+        }
+        this.stompClient.send('/app/chat.send', {}, JSON.stringify(message));
+    }
+
+    sendTypingStatus(roomId, userId, isTyping) {
+        if (!this.connected) {
+            throw new Error('WebSocket not connected');
+        }
+        this.stompClient.send('/app/chat.typing', {}, `${userId}:${roomId}:${isTyping ? 'typing' : 'stopped'}`);
+    }
+
+    onMessage(handler) {
+        this.messageHandlers.add(handler);
+    }
+
+    onTypingStatus(handler) {
+        this.typingHandlers.add(handler);
+    }
+
+    removeMessageHandler(handler) {
+        this.messageHandlers.delete(handler);
+    }
+
+    removeTypingHandler(handler) {
+        this.typingHandlers.delete(handler);
     }
 }
 
-// Create a singleton instance
-const websocketService = new WebSocketService();
-export default websocketService; 
+export default new WebSocketService(); 

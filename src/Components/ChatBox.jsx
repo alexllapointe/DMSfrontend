@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../Styles/ChatBox.css';
 import { X, Send } from 'lucide-react';
 import websocketService from '../services/websocketService';
+import chatHttpService from '../services/chatHttpService';
 
 const quickReplies = {
     managerToDriver: [
@@ -49,59 +50,82 @@ const ChatBox = ({ roomId, senderId, senderRole, receiverRole, quickReplyType, o
     const [error, setError] = useState(null);
     const [typing, setTyping] = useState(false);
     const [isSomeoneTyping, setIsSomeoneTyping] = useState(false);
+    const [isWebSocketConnected, setIsWebSocketConnected] = useState(true);
     const chatMessagesRef = useRef(null);
     const typingTimeoutRef = useRef(null);
+    const pollIntervalRef = useRef(null);
 
     useEffect(() => {
-        // Connect to WebSocket if not already connected
-        if (!websocketService.connected) {
-            websocketService.connect(senderId);
+        let wsConnected = false;
+        
+        // Try WebSocket connection
+        try {
+            if (!websocketService.connected) {
+                websocketService.connect(senderId);
+            }
+            websocketService.joinRoom(roomId, senderId);
+            wsConnected = true;
+            setIsWebSocketConnected(true);
+        } catch (err) {
+            console.error('WebSocket connection failed:', err);
+            setIsWebSocketConnected(false);
+            wsConnected = false;
         }
 
-        // Join the chat room
-        websocketService.joinRoom(roomId, senderId);
-
-        // Set up message handler
-        websocketService.onMessage((message) => {
-            if (message.roomId === roomId) {
-                setMessages(prev => [...prev, message]);
-                if (message.senderId !== senderId) {
-                    websocketService.sendMessage(roomId, {
-                        messageId: message.id,
-                        status: 'delivered'
-                    });
+        // Set up message handler for WebSocket
+        if (wsConnected) {
+            websocketService.onMessage((message) => {
+                if (message.roomId === roomId) {
+                    setMessages(prev => [...prev, message]);
+                    if (message.senderId !== senderId) {
+                        websocketService.sendMessage(roomId, {
+                            messageId: message.id,
+                            status: 'delivered'
+                        });
+                    }
                 }
-            }
-        });
+            });
 
-        // Set up typing status handler
-        websocketService.onTypingStatus((roomId, userId, isTyping) => {
-            if (roomId === roomId && userId !== senderId) {
-                setIsSomeoneTyping(isTyping);
-            }
-        });
+            // Set up typing status handler
+            websocketService.onTypingStatus((roomId, userId, isTyping) => {
+                if (roomId === roomId && userId !== senderId) {
+                    setIsSomeoneTyping(isTyping);
+                }
+            });
+        }
 
-        // Load message history
-        const loadMessages = async () => {
-            try {
-                const response = await fetch(`http://localhost:8080/api/chat/messages/${roomId}`);
-                if (!response.ok) throw new Error('Failed to load messages');
-                const data = await response.json();
-                setMessages(data);
-            } catch (err) {
-                setError(err.message);
-            }
-        };
+        // Load initial messages
         loadMessages();
+
+        // If WebSocket is not connected, set up polling
+        if (!wsConnected) {
+            pollIntervalRef.current = setInterval(loadMessages, 3000);
+        }
 
         // Cleanup
         return () => {
-            websocketService.leaveRoom(roomId);
+            if (wsConnected) {
+                websocketService.leaveRoom(roomId);
+            }
             if (typingTimeoutRef.current) {
                 clearTimeout(typingTimeoutRef.current);
             }
+            if (pollIntervalRef.current) {
+                clearInterval(pollIntervalRef.current);
+            }
         };
     }, [roomId, senderId]);
+
+    const loadMessages = async () => {
+        try {
+            const data = await chatHttpService.getMessages(roomId);
+            setMessages(data);
+            setError(null);
+        } catch (err) {
+            setError('Failed to load messages');
+            console.error('Error loading messages:', err);
+        }
+    };
 
     const handleSendMessage = async (msg) => {
         const content = msg || messageInput;
@@ -115,28 +139,39 @@ const ChatBox = ({ roomId, senderId, senderRole, receiverRole, quickReplyType, o
             created_at: new Date().toISOString()
         };
 
-        websocketService.sendMessage(roomId, message);
-        setMessageInput('');
-        setTyping(false);
+        try {
+            if (isWebSocketConnected) {
+                websocketService.sendMessage(roomId, message);
+            } else {
+                await chatHttpService.sendMessage(message);
+                // Immediately load messages to show the new message
+                await loadMessages();
+            }
+            setMessageInput('');
+            setTyping(false);
+        } catch (err) {
+            setError('Failed to send message');
+            console.error('Error sending message:', err);
+        }
     };
 
     const handleInputChange = (e) => {
         setMessageInput(e.target.value);
-        if (!typing) {
+        if (!typing && isWebSocketConnected) {
             setTyping(true);
             websocketService.sendTypingStatus(roomId, senderId, true);
         }
 
-        // Clear existing timeout
         if (typingTimeoutRef.current) {
             clearTimeout(typingTimeoutRef.current);
         }
 
-        // Set new timeout
-        typingTimeoutRef.current = setTimeout(() => {
-            setTyping(false);
-            websocketService.sendTypingStatus(roomId, senderId, false);
-        }, 2000);
+        if (isWebSocketConnected) {
+            typingTimeoutRef.current = setTimeout(() => {
+                setTyping(false);
+                websocketService.sendTypingStatus(roomId, senderId, false);
+            }, 2000);
+        }
     };
 
     const handleQuickReply = (qr) => {
