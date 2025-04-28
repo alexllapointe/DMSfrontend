@@ -15,7 +15,6 @@ import {
     FormControl,
     InputLabel,
 } from "@mui/material";
-import SupportChatWidget from './SupportChatWidget';
 
 const locations = [
     { label: "Indianapolis, Indiana, 46204, United States" },
@@ -231,14 +230,6 @@ const Shipping = ({ onOptionSelect }) => {
                     </Box>
                 )}
             </Container>
-            <SupportChatWidget
-                roomId={"customer-manager-room-1"}
-                senderId={"customer-1"}
-                senderRole={"customer"}
-                receiverId={"manager-1"}
-                receiverRole={"manager"}
-                quickReplyType={null}
-            />
         </Box>
     );
 };

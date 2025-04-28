@@ -91,6 +91,44 @@ export const subscribeToMessages = (roomId, callback) => {
   };
 };
 
+// Mark message as delivered
+export const markMessageDelivered = async (messageId) => {
+  try {
+    await fetch(`/api/chat/messages/${messageId}/delivered`, { method: 'POST' });
+  } catch (error) {
+    console.error('Error marking message delivered:', error);
+  }
+};
+
+// Mark message as read
+export const markMessageRead = async (messageId) => {
+  try {
+    await fetch(`/api/chat/messages/${messageId}/read`, { method: 'POST' });
+  } catch (error) {
+    console.error('Error marking message read:', error);
+  }
+};
+
+// Send typing status
+export const sendTypingStatus = async (roomId, userId, typing) => {
+  try {
+    await fetch(`/api/chat/rooms/${roomId}/typing?userId=${userId}&typing=${typing}`, { method: 'POST' });
+  } catch (error) {
+    console.error('Error sending typing status:', error);
+  }
+};
+
+// Get user presence
+export const getUserPresence = async (userId) => {
+  try {
+    const res = await fetch(`/api/chat/presence/${userId}`);
+    if (!res.ok) return { online: false };
+    return await res.json();
+  } catch (error) {
+    return { online: false };
+  }
+};
+
 // Types (for TypeScript projects)
 /**
  * @typedef {Object} ChatRoom

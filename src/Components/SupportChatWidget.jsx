@@ -21,6 +21,7 @@ const SupportChatWidget = ({ roomId, senderId, senderRole, receiverId, receiverR
                         senderRole={senderRole}
                         receiverRole={receiverRole}
                         quickReplyType={quickReplyType}
+                        onClose={() => setIsOpen(false)}
                     />
                 </div>
             )}

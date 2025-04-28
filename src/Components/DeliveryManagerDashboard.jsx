@@ -5,6 +5,7 @@ import ChatList from './ChatList';
 import ChatBox from './ChatBox';
 import { Drawer, IconButton } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
+import Tooltip from '@mui/material/Tooltip';
 
 // Dummy data
 const unassignedOrders = [
@@ -31,6 +32,12 @@ const DeliveryManagerDashboard = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [currentUserId] = useState('manager-1'); // Replace with real auth
+  const [unreadCounts, setUnreadCounts] = useState({
+    'driver-manager-ORD101': 2,
+    'driver-manager-ORD102': 0,
+    'customer-ORD201': 1,
+    'customer-ORD202': 0,
+  });
 
   const assignDriver = (orderId, driver) => {
     setAssignments(prev => ({ ...prev, [orderId]: driver }));
@@ -40,6 +47,12 @@ const DeliveryManagerDashboard = () => {
     const updated = [...serviceList];
     updated[index].price = newPrice;
     setServiceList(updated);
+  };
+
+  const handleSelectRoom = (room) => {
+    setSelectedRoom(room);
+    setChatOpen(true);
+    setUnreadCounts(prev => ({ ...prev, [room.id]: 0 }));
   };
 
   const renderAssignDeliveries = () => (
@@ -67,9 +80,35 @@ const DeliveryManagerDashboard = () => {
       <h3>Customer Orders</h3>
       <div className="order-status">
         {assignedOrders.map(order => (
-          <div key={order.id} className={`order-card ${order.status === 'Completed' ? 'done' : 'pending'}`}>
-            <p><strong>{order.id}</strong> - Assigned to {order.driver}</p>
-            <p>Status: {order.status}</p>
+          <div key={order.id} className={`order-card ${order.status === 'Completed' ? 'done' : 'pending'}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <p style={{ margin: 0 }}><strong>{order.id}</strong> - Assigned to {order.driver}</p>
+              <p style={{ margin: 0 }}>Status: {order.status}</p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Tooltip title="Message Driver">
+                <IconButton
+                  size="large"
+                  color="primary"
+                  style={{ marginLeft: 8, marginBottom: 4 }}
+                  onClick={() => {
+                    setSelectedRoom({
+                      id: `driver-manager-${order.id}`,
+                      type: 'driver-manager',
+                      participant1Id: currentUserId,
+                      participant2Id: order.driver,
+                      orderId: order.id,
+                      driver: order.driver,
+                      status: order.status
+                    });
+                    setChatOpen(true);
+                  }}
+                >
+                  <ChatIcon fontSize="large" />
+                </IconButton>
+              </Tooltip>
+              <span style={{ fontSize: 12, color: '#555' }}>Message Driver</span>
+            </div>
           </div>
         ))}
       </div>
@@ -121,24 +160,34 @@ const DeliveryManagerDashboard = () => {
         </div>
         {renderContent()}
       </div>
-      {/* Chat Sidebar */}
+      {/* Floating chat sidebar button */}
       <div style={{ position: 'fixed', top: 80, right: 0, zIndex: 1200 }}>
         <IconButton color="primary" onClick={() => setChatOpen(!chatOpen)}>
           <ChatIcon />
         </IconButton>
       </div>
       <Drawer anchor="right" open={chatOpen} onClose={() => setChatOpen(false)}>
-        <div style={{ width: 350, padding: 16, height: '100vh', display: 'flex', flexDirection: 'column' }}>
-          <ChatList onSelectRoom={setSelectedRoom} />
-          {selectedRoom && (
-            <ChatBox
-              roomId={selectedRoom.id}
-              senderId={currentUserId}
-              senderRole={selectedRoom.type === 'driver-manager' ? 'manager' : 'manager'}
-              receiverRole={selectedRoom.type === 'driver-manager' ? 'driver' : 'customer'}
-              quickReplyType={selectedRoom.type === 'driver-manager' ? 'managerToDriver' : 'managerToCustomer'}
-            />
-          )}
+        <div style={{ width: 350, padding: 0, height: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, padding: 16, display: 'flex', flexDirection: 'column' }}>
+            <ChatList onSelectRoom={handleSelectRoom} unreadCounts={unreadCounts} />
+            {selectedRoom && (
+              <ChatBox
+                roomId={selectedRoom.id}
+                senderId={currentUserId}
+                senderRole={selectedRoom.type === 'driver-manager' ? 'manager' : 'manager'}
+                receiverRole={selectedRoom.type === 'driver-manager' ? 'driver' : 'customer'}
+                quickReplyType={selectedRoom.type === 'driver-manager' ? 'managerToDriver' : 'managerToCustomer'}
+                { ...(selectedRoom.type === 'driver-manager' ? {
+                  receiverName: selectedRoom.participant2Id || selectedRoom.driver,
+                  receiverAvatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedRoom.participant2Id || selectedRoom.driver)}&background=0a3977&color=fff&size=64`
+                } : selectedRoom.type === 'customer' ? {
+                  receiverName: selectedRoom.customerName,
+                  receiverAvatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedRoom.customerName)}&background=0a3977&color=fff&size=64`
+                } : {}) }
+                onClose={() => setSelectedRoom(null)}
+              />
+            )}
+          </div>
         </div>
       </Drawer>
     </div>
