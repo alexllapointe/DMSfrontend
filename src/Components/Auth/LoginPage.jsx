@@ -3,7 +3,7 @@ import '../../Styles/LoginPage.css';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-const LoginPage = () => {
+const LoginPage = ({ setUserRole }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -27,7 +27,6 @@ const LoginPage = () => {
     }
 
     const formData = { email, password };
-    console.log("[handleSubmit] Sending login request with formData:", formData);
 
     try {
       const response = await fetch("https://dmsservice-latest.onrender.com/login", {
@@ -50,6 +49,7 @@ const LoginPage = () => {
         console.log("[handleSubmit] Decoded JWT:", decoded);
 
         localStorage.setItem('userEmail', decoded.sub);
+        setUserRole(decoded.scope);
 
         alert("Login successful!");
         navigate('/');

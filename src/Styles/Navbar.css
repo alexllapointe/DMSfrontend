@@ -10,6 +10,45 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+
+.driver-dashboard-link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: text-decoration 0.3s ease-in-out;
+}
+
+.driver-dashboard-link:hover {
+    text-decoration: underline;
+}
+
+.manager-dashboard-link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: text-decoration 0.3s ease-in-out;
+}
+
+.manager-dashboard-link:hover {
+    text-decoration: underline;
+}
+
+
+.logout-link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: text-decoration 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
 .nav-container {
     display: flex;
     justify-content: space-between;

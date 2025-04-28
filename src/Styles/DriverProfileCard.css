@@ -1,0 +1,92 @@
+/* Layout container */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Sidebar */
+.dashboard-cards {
+    width: 230px;
+    background-color: #f1edff;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e0dfff;
+}
+
+/* Sidebar item */
+.dashboard-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 25px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #4b2db9;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Hover & active styling */
+.dashboard-card:hover,
+.dashboard-card.active {
+    background-color: #e3d6ff;
+    color: #320ca3;
+}
+
+.dashboard-card p {
+    margin: 0;
+}
+
+/* Right section content */
+.section-box {
+    flex: 1;
+    padding: 40px;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+/* History card animation (optional) */
+.history-card {
+    animation: fadeIn 0.4s ease-in;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive: stack sidebar on top */
+@media screen and (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .dashboard-cards {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .dashboard-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+    }
+}
